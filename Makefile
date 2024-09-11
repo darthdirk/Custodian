@@ -11,18 +11,19 @@ BIN=custodian
 SOURCES := $(wildcard $(SRC)/*.c)
 OBJECTS := $(patsubst $(SRC)/%.c, $(OBJ)/%.o, $(SOURCES))
 
-PLUGIN_SRCS:=$(wildcard $(SRC)/$(PLUGINS)/*.c)
-PLUGIN_OBJS:=$(patsubst $(SRC)/$(PLUGINS)/%.c,$(DIST)/$(PLUGINS))
+#PLUGIN_SRCS:=$(wildcard $(SRC)/$(PLUGINS)/*.c)
+#PLUGIN_OBJS:=$(patsubst $(SRC)/$(PLUGINS)/%.c, $(DIST)/$(PLUGINS))
 
 all: $(DIST)/$(BIN) $(PLUGINS)
 
 # build the final binary -ldl link dynamic lib
 $(DIST)/$(BIN): $(DIST) $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $@ -ldl $(LIBSSL)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $@
+#-ldl $(LIBSSL)
 
 # compile my .c files to .o (make sure that the obj dir has been created)
-$(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h $(OBJ)
-	$(CC) $(CFLAGS) -I$(SRC) -c $< -o $@
+#$(OBJ)/%.o: $(SRC)/%.c $(SRC)/%.h $(OBJ)
+#	$(CC) $(CFLAGS) -I$(SRC) -c $< -o $@
 
 # four modules that don't have matching header files
 # right now, that's just main.c
