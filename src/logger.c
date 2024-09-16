@@ -22,6 +22,7 @@ static pthread_t writer = 0;
 static char buffer[LOG_MAX_MSG_LEN] = { 0 };
 FILE* fh = NULL;
 
+// Retrives the current time in ms 
 uint64_t time_in_microseconds() {
     struct timespec ts;
     if (clock_gettime(CLOCK_REALTIME, &ts) == 0) {
@@ -53,6 +54,10 @@ int write_header(struct tm* t) {
     return 0;
 }
 
+/*
+writes a log entry to file. Formats the log msg useing va_list and stores into buffer
+
+*/
 void write_line(const char* format, char prefix, const char* filename, int line,
                         const char* function, va_list vl ){
     vsnprintf(buffer, LOG_MAX_MSG_LEN, format, vl);
