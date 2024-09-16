@@ -8,6 +8,7 @@
 #include <pthread.h>    // for pthread_t and related functions
 #include <stdarg.h>     // for va_list and related functions
 #include <time.h>       // for time functions
+#include <stdbool.h>
 #include <sys/time.h>
 #include <stdint.h>     // for uint64_t and related types
 #include <stdio.h>      // for FILE, fopen, fwrite, fclose, fflush, perror
@@ -96,24 +97,23 @@ void* writer_thread(void* arg) {
 }
 
 // Variadic function
-void log_write(enum LogLevel level, const char* filename, int line, const char* function, const char* format, ...) {
+void log_write(const char* prefix, const char* filename, int line, const char* function, const char* format, ...) {
     if(writer != 0) {
         //TODO
     } else {
         va_list vl;
         va_start(vl, format);
-        write_line(format, level, filename, line, function, vl);
+        write_line(format, (prefix != NULL) ? prefix[0] : '\0', filename, line, function, vl);
         va_end(vl);
     }
 }
 
-int logger_init(const char* log_folder, const char* level, int create_thread) {
+int logger_init(const char* log_folder, const char* prefix, bool create_thread) {
     int err = 0;
     if(log_folder != NULL) {
         if(mkdir(log_folder, 0755) && errno != EEXIST) {
             return errno;
         }
-
         time_t now;
         struct tm t;
         time(&now);
@@ -122,9 +122,9 @@ int logger_init(const char* log_folder, const char* level, int create_thread) {
         char s[11] = { 0 }; //MM.DD.YYYY\0
         strftime(s, 11, "%m.%d.%Y", &t);
 
-        size_t l = strlen(log_folder) + strlen(s) + (strlen(level) + 1) + 5; // .log\0
+        size_t l = strlen(log_folder) + strlen(s) + (strlen(prefix) + 1) + 6; // .log\0
         char filename[l];
-        snprintf(filename, l, "%s/%s.%s.log", log_folder, level, s);
+        snprintf(filename, l, "%s/%s.%s.log", log_folder, prefix, s);
 
         if((err = open_file(filename)) != 0) {
             return err;
@@ -141,7 +141,6 @@ int logger_init(const char* log_folder, const char* level, int create_thread) {
         }
     }
     return err;
-
     }
 
 void logger_fini() {

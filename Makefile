@@ -47,4 +47,4 @@ $(DIST)/$(PLUGINS):
 
 clean:
 	rm -rf $(OBJ)
-	rm -rf $(DIST)s
+	rm -rf $(DIST)
