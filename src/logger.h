@@ -1,29 +1,19 @@
-#pragma once
 #ifndef LOGGER_H_
 #define LOGGER_H_
 
 #include <stdio.h>
-#include <time.h>
-#include <stdarg.h>
-#include <stdbool.h>
 
-#define log_info(format, ...) log_write('I', __FILE__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
-#define log_warn(format, ...) log_write('W', __FILE__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
-#define log_error(format, ...) log_write('E', __FILE__, __LINE__, __FUNCTION__, format, ##__VA_ARGS__)
+#define LOG_LEVELS 4
 
-#define print_error(msg, ...) { printf(msg, ##__VA_ARGS__); printf("\n"); log_error(msg, ##__VA_ARGS__); }
-#define print_warn(msg, ...) { printf(msg, ##__VA_ARGS__); printf("\n"); log_warn(msg, ##__VA_ARGS__); }
-#define print_info(msg, ...) { printf(msg, ##__VA_ARGS__); printf("\n"); log_info(msg, ##__VA_ARGS__); }
+enum LogLevel {Debug = 0, Verbose = 1, Info = 2, Error = 3};
 
+// Default log level to Info, if not set.
+#ifndef LOGGER_LEVEL
+#define LOGGER_LEVEL Info
+#endif
 
-int open_file(const char* filename);
-int write_header(struct tm* t);
-void write_line(const char* format, char prefix, const char* filename, int line,
-                const char* function, va_list vl );
-void* writer_thread(void* arg);
-void log_write(const char* prefix, const char* filename, int line, const char* function, const char* format, ...);
-int logger_init(const char* log_folder, const char* prefix, bool thread);
-// Replacement for printf 
+void logger_init(FILE *fp, enum LogLevel level);
+void logmsg(enum LogLevel level, const char *format, ...);
 void logger_fini();
 
 
