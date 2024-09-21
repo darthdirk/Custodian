@@ -6,6 +6,7 @@ OBJ=obj
 PLUGINS=plugins
 DIST=dist
 BIN=custodian
+INCLUDES += -I$(shell arm-none-eabi-gcc -print-sysroot)/usr/include
 
 
 SOURCES := $(wildcard $(SRC)/*.c)
